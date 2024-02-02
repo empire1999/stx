@@ -33,12 +33,13 @@ def check_block_tx(block_height):
 			if tx_type == "token_transfer" :
 				# 将stxmap铭文加到list
 				nonce = tx['nonce']
+				tx_index = tx['tx_index']
 				fee_rate = int(tx['fee_rate']) / 1000000
 				rec_addr = tx['token_transfer']['recipient_address']
 				memo_hex = tx['token_transfer']['memo']
 				memo = hex_to_str(memo_hex[2:28])
 				if memo.find("stxmap") >= 0:
-					dict = {'nonce' : nonce, 'fee_rate' : fee_rate, 'rec_addr' : rec_addr, 'memo' : memo}
+					dict = {'nonce' : nonce, 'fee_rate' : fee_rate, 'rec_addr' : rec_addr, 'memo' : memo, 'tx_index' : tx_index}
 					tx_list.append(dict)
 		
 		offset = offset + limit
@@ -48,13 +49,13 @@ def check_block_tx(block_height):
 		results_list = json_data['results']
 		
 	print("\n◇ block_height: ", block_height)
-	print("stxmap | rec_addr | [nonce] | fee_rate(stx)")
+	print("stxmap | (tx_index) | rec_addr | [nonce] | fee_rate(stx)")
 	print("-----------------------------------------------------")
 
 	# List按照memo和fee排序后打印
 	tx_list.sort(key = lambda k: (k.get('memo', 0), k.get('fee_rate', 0)))
 	for idx, tx in enumerate(tx_list) :
-		print(tx['memo'] + " | " + tx['rec_addr'] + " | [" + str(tx['nonce']) + "] | "  + str(tx['fee_rate']))
+		print(tx['memo'] + " | (" + str(tx['tx_index']) + ") | " + tx['rec_addr'] + " | [" + str(tx['nonce']) + "] | "  + str(tx['fee_rate']))
 
 	print("-----------------------------------------------------\n")
 	
